@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediScan | Grad-CAM Visualization</title>
+  <meta name="description" content="Explore how our AI visualizes and identifies bone fractures using Grad-CAM technology">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="footer-styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    /* Custom styles for redesigned Grad-CAM page */
+    :root {
+      --primary-gradient: linear-gradient(135deg, var(--primary) 0%, #3851E0 100%);
+      --accent-gradient: linear-gradient(135deg, #00D1FF 0%, #00A0FF 100%);
+      --alert-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF3939 100%);
+      --glow-blue: 0 5px 25px rgba(0, 98, 255, 0.2);
+      --glow-accent: 0 5px 25px rgba(0, 209, 255, 0.2);
+    }
+    
+    /* HEADER AND NAVIGATION - Match with global styles */
+    .header {
+      position: fixed;
+      width: 100%;
+      z-index: 1000;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      padding: 1rem 0;
+      background-color: var(--surface-2);
+    }
+
+    .header.scrolled {
+      background-color: var(--surface-2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+    
+    /* Full-bleed hero section */
+    .gradcam-hero {
+      padding-top: 80px; /* Add padding to account for fixed header */
+      min-height: calc(100vh - 80px); /* Adjust height to account for header */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background-color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .gradcam-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: radial-gradient(circle at 70% 60%, rgba(0, 209, 255, 0.03) 0%, transparent 40%),
+                  radial-gradient(circle at 30% 40%, rgba(0, 98, 255, 0.05) 0%, transparent 50%);
+    }
+    
+    .gradcam-wave {
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 15vh;
+      background: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none"%3E%3Cpath fill="%23F5F7FF" fill-opacity="1" d="M0,224L48,202.7C96,181,192,139,288,138.7C384,139,480,181,576,186.7C672,192,768,160,864,170.7C960,181,1056,235,1152,240C1248,245,1344,203,1392,181.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"%3E%3C/path%3E%3C/svg%3E');
+      background-size: cover;
+      background-repeat: no-repeat;
+      z-index: 1;
+    }
+    
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 5rem;
+      padding: 0 2rem;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .hero-content {
+      position: relative;
+    }
+    
+    .hero-title {
+      font-size: 4rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+      background: linear-gradient(135deg, var(--text) 0%, var(--primary) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .hero-description {
+      color: var(--text-light);
+      font-size: var(--font-lg);
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+    
+    .hero-visual {
+      position: relative;
+      padding-bottom: 90%; /* Reduced from 100% to create more space at bottom */
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    
+    .visual-container {
+      position: absolute;
+      width: 80%;
+      height: 80%;
+      top: 5%; /* Moved up slightly */
+      left: 10%;
+      transform-style: preserve-3d;
+      animation: float 8s infinite ease-in-out;
+    }
+    
+    .visual-xray, .visual-gradcam {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.6s ease;
+      overflow: hidden;
+    }
+    
+    .visual-xray {
+      background: var(--surface-2);
+      transform: translateZ(0) rotateY(0);
+      z-index: 2;
+    }
+    
+    .visual-gradcam {
+      background: var(--surface-2);
+      transform: translateZ(-20px) rotateY(180deg);
+      z-index: 1;
+    }
+    
+    .visual-xray img, .visual-gradcam img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.05);
+    }
+    
+    /* Fixed controls position - moved significantly lower */
+    .visual-controls {
+      position: absolute;
+      bottom: 2%; /* Moved down from 8% to 2% to position button much lower */
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      z-index: 100; /* Ensure highest z-index */
+    }
+    
+    /* Enhanced visual button styling */
+    .visual-button {
+      background: linear-gradient(135deg, var(--primary) 0%, #3851E0 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 50px;
+      padding: 0.85rem 2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 8px 25px rgba(0, 98, 255, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .visual-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.7s ease;
+      z-index: -1;
+    }
+    
+    .visual-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 98, 255, 0.35);
+    }
+    
+    .visual-button:hover::before {
+      left: 100%;
+    }
+    
+    .visual-button .button-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.5s ease;
+    }
+    
+    .visual-button.active {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF3939 100%);
+      box-shadow: 0 8px 25px rgba(255, 57, 57, 0.25);
+    }
+    
+    .visual-button.active:hover {
+      box-shadow: 0 12px 30px rgba(255, 57, 57, 0.35);
+    }
+    
+    .visual-button .status-indicator {
+      position: relative;
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: var(--white);
+      margin-right: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .visual-button .status-indicator::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.3);
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(0.9);
+        opacity: 0.7;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.3;
+      }
+      100% {
+        transform: scale(0.9);
+        opacity: 0.7;
+      }
+    }
+    
+    .show-gradcam .visual-xray {
+      transform: translateZ(-20px) rotateY(-180deg);
+      z-index: 1;
+    }
+    
+    .show-gradcam .visual-gradcam {
+      transform: translateZ(0) rotateY(0);
+      z-index: 2;
+    }
+    
+    /* Immersive scroll sections */
+    .immersive-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .immersive-section.light {
+      background-color: var(--surface-2);
+    }
+    
+    .immersive-section.dark {
+      background-color: var(--text);
+      color: var(--white);
+    }
+    
+    .immersive-inner {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .section-intro {
+      max-width: 700px;
+      margin: 0 auto 4rem;
+      text-align: center;
+    }
+    
+    .section-eyebrow {
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: var(--font-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    
+    .immersive-section.dark .section-eyebrow {
+      color: var(--accent);
+    }
+    
+    .section-eyebrow span {
+      width: 30px;
+      height: 2px;
+      background-color: currentColor;
+    }
+    
+    .section-heading {
+      font-size: var(--font-3xl);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    .immersive-section.dark .section-heading {
+      background: linear-gradient(135deg, var(--white) 0%, rgba(255, 255, 255, 0.8) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .section-subheading {
+      color: var(--text-light);
+      font-size: var(--font-md);
+      line-height: 1.7;
+    }
+    
+    .immersive-section.dark .section-subheading {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    /* Timeline process section */
+    .timeline {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+    
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      height: 100%;
+      width: 4px;
+      background: var(--primary-gradient);
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    
+    .timeline-item {
+      display: flex;
+      position: relative;
+      margin: 2rem 0;
+      width: 100%;
+      justify-content: center;
+      min-height: 120px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+    
+    .timeline-item.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .timeline-icon {
+      position: absolute;
+      left: 50%;
+      width: 60px;
+      height: 60px;
+      margin-left: -30px;
+      border-radius: 50%;
+      text-align: center;
+      background: var(--primary-gradient);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      z-index: 2;
+      box-shadow: var(--glow-blue);
+    }
+    
+    .timeline-item:nth-child(2) .timeline-icon {
+      background: var(--accent-gradient);
+      box-shadow: var(--glow-accent);
+    }
+    
+    .timeline-item:nth-child(3) .timeline-icon {
+      background: linear-gradient(135deg, #5E7BFE 0%, #3851E0 100%);
+    }
+    
+    .timeline-item:nth-child(4) .timeline-icon {
+      background: var(--alert-gradient);
+    }
+    
+    .timeline-content {
+      width: 45%;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+    
+    .timeline-item:nth-child(odd) .timeline-content {
+      margin-right: auto;
+      margin-left: 0;
+      transform: translateX(-50px);
+      transition: all 0.8s ease;
+    }
+    
+    .timeline-item:nth-child(even) .timeline-content {
+      margin-left: auto;
+      margin-right: 0;
+      transform: translateX(50px);
+      transition: all 0.8s ease;
+    }
+    
+    .timeline-item.show .timeline-content {
+      transform: translateX(0);
+    }
+    
+    .timeline-title {
+      font-size: var(--font-lg);
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .timeline-title::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      height: 3px;
+      width: 40px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+    
+    .timeline-text {
+      color: var(--text-light);
+      font-size: var(--font-sm);
+      line-height: 1.6;
+    }
+    
+    /* Interactive comparison slider */
+    .comparison-section {
+      padding: 8rem 0;
+      background-color: var(--white);
+    }
+    
+    .comparison-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 3rem;
+      margin-top: 4rem;
+    }
+    
+    .comparison-item {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+      height: 450px;
+    }
+    
+    .comparison-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    .comparison-before,
+    .comparison-after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    .comparison-before img,
+    .comparison-after img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .comparison-before {
+      z-index: 1;
+      width: 50%;
+    }
+    
+    .comparison-label {
+      position: absolute;
+      bottom: 20px;
+      padding: 8px 15px;
+      border-radius: 25px;
+      font-size: var(--font-xs);
+      font-weight: 600;
+      color: white;
+      z-index: 3;
+    }
+    
+    .comparison-before-label {
+      left: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+    
+    .comparison-after-label {
+      right: 20px;
+      background-color: rgba(0, 98, 255, 0.9);
+    }
+    
+    .comparison-handle {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 4px;
+      height: 100%;
+      background-color: var(--white);
+      z-index: 2;
+      transform: translateX(-2px);
+      cursor: ew-resize;
+    }
+    
+    .comparison-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--white);
+      transform: translate(-50%, -50%);
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      cursor: ew-resize;
+    }
+    
+    .comparison-arrows {
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+    
+    .comparison-title {
+      margin-top: 1.5rem;
+      font-size: var(--font-lg);
+      font-weight: 600;
+    }
+    
+    .comparison-description {
+      color: var(--text-light);
+      margin-top: 0.5rem;
+      font-size: var(--font-sm);
+      line-height: 1.6;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 1200px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        padding-top: 3rem;
+      }
+      
+      .hero-title {
+        font-size: 3rem;
+      }
+      
+      .hero-visual {
+        padding-bottom: 70%;
+      }
+      
+      .timeline::before {
+        left: 60px;
+      }
+      
+      .timeline-icon {
+        left: 60px;
+        margin-left: -30px;
+      }
+      
+      .timeline-content {
+        width: 80%;
+      }
+      
+      .timeline-item:nth-child(odd) .timeline-content,
+      .timeline-item:nth-child(even) .timeline-content {
+        margin-left: auto;
+        margin-right: 0;
+        transform: translateX(0);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .comparison-item {
+        height: 350px;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .hero-badge {
+        padding: 0.4rem 0.8rem;
+      }
+      
+      .hero-title {
+        font-size: 2rem;
+      }
+      
+      .timeline::before {
+        left: 40px;
+      }
+      
+      .timeline-icon {
+        left: 40px;
+        width: 50px;
+        height: 50px;
+        margin-left: -25px;
+      }
+      
+      .timeline-content {
+        width: 85%;
+        padding: 1.5rem;
+      }
+    }
+    
+    /* Animation keyframes */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotateY(0); }
+      50% { transform: translateY(-15px) rotateY(3deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <div id="nav-placeholder"></div>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <!-- 3D Interactive Hero Section -->
+    <section class="gradcam-hero">
+      <div class="gradcam-bg"></div>
+      <div class="hero-inner">
+        <div class="hero-content">
+          <h1 class="hero-title">Visualizing the Unseen</h1>
+          <p class="hero-description">Grad-CAM technology makes AI-based fracture detection transparent by creating visual heatmaps that highlight exactly where our algorithm detects potential fractures in X-ray images.</p>
+          <a href="#explore" class="btn-primary">
+            <i class="fas fa-eye"></i> Explore Technology
+          </a>
+        </div>
+        
+        <div class="hero-visual">
+          <div class="visual-container" id="visual-container">
+            <div class="visual-xray">
+              <img src="./images/wrist-xray.jpg" alt="Wrist X-ray" onerror="this.src='https://images.unsplash.com/photo-1583774198559-21876a208a23?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80'">
+            </div>
+            <div class="visual-gradcam">
+              <img src="./images/wrist-gradcam.jpg" alt="Wrist X-ray with Grad-CAM visualization" onerror="this.src='https://images.unsplash.com/photo-1583774198559-21876a208a23?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80'">
+            </div>
+          </div>
+          
+          <div class="visual-controls">
+            <button class="visual-button" id="flip-visual">
+              <i class="fas fa-sync-alt"></i> Toggle Heatmap View
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="gradcam-wave"></div>
+    </section>
+
+    <!-- What is Grad-CAM Section -->
+    <section class="immersive-section light" id="explore">
+      <div class="immersive-inner">
+        <div class="section-intro">
+          <div class="section-eyebrow">
+            <span></span>Understanding AI Vision<span></span>
+          </div>
+          <h2 class="section-heading">What is Grad-CAM?</h2>
+          <p class="section-subheading">Gradient-weighted Class Activation Mapping (Grad-CAM) is a technique that produces visual explanations for decisions made by convolutional neural networks, making AI diagnosis transparent and interpretable.</p>
+        </div>
+        
+        <!-- Timeline-based process flow -->
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-upload"></i>
+            </div>
+            <div class="timeline-content">
+              <h3 class="timeline-title">X-ray Analysis</h3>
+              <p class="timeline-text">The X-ray image is processed through multiple convolutional layers of our deep neural network, extracting key features and patterns that could indicate a fracture.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <div class="timeline-content">
+              <h3 class="timeline-title">Feature Detection</h3>
+              <p class="timeline-text">Our AI identifies critical patterns and anomalies in bone structure that might indicate fractures or other abnormalities by comparing with thousands of training examples.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="timeline-content">
+              <h3 class="timeline-title">Gradient Calculation</h3>
+              <p class="timeline-text">Grad-CAM calculates the gradients flowing into the final convolutional layer to generate class-specific feature importance maps that highlight decision-making regions.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-fire"></i>
+            </div>
+            <div class="timeline-content">
+              <h3 class="timeline-title">Heatmap Generation</h3>
+              <p class="timeline-text">A color-coded visualization overlays the original X-ray, with red areas indicating regions most critical to the diagnosis. This creates a transparent window into the AI's decision process.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Comparison Section -->
+    <section class="comparison-section">
+      <div class="comparison-container">
+        <div class="section-intro">
+          <div class="section-eyebrow">
+            <span></span>Interactive Exploration<span></span>
+          </div>
+          <h2 class="section-heading">Compare X-rays with Grad-CAM Overlays</h2>
+          <p class="section-subheading">Slide to compare original X-ray images with their Grad-CAM visualizations and see how our AI identifies potential fracture sites.</p>
+        </div>
+        
+        <div class="comparison-grid">
+          <!-- Wrist Comparison -->
+          <div>
+            <div class="comparison-item">
+              <div class="comparison-wrapper">
+                <div class="comparison-after">
+                  <img src="./images/wrist-gradcamm.jpg" alt="Wrist X-ray with Grad-CAM" onerror="this.src='https://images.unsplash.com/photo-1583774198559-21876a208a23?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80'">
+                </div>
+                <div class="comparison-before">
+                  <img src="./images/wrist-xrayy.jpg" alt="Wrist X-ray" onerror="this.src='https://images.unsplash.com/photo-1583774198559-21876a208a23?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80'">
+                </div>
+                <div class="comparison-handle">
+                  <div class="comparison-button">
+                    <i class="fas fa-arrows-alt-h comparison-arrows"></i>
+                  </div>
+                </div>
+                <div class="comparison-before-label comparison-label">Original</div>
+                <div class="comparison-after-label comparison-label">Grad-CAM</div>
+              </div>
+            </div>
+            <h3 class="comparison-title">Distal Radius Fracture</h3>
+            <p class="comparison-description">The heatmap clearly highlights the fracture line at the distal radius, an often subtle finding that can be challenging to detect in standard X-rays, especially for non-specialists.</p>
+          </div>
+          
+          <!-- Ankle Comparison -->
+          <div>
+            <div class="comparison-item">
+              <div class="comparison-wrapper">
+                <div class="comparison-after">
+                  <img src="./images/ankle-gradcam.jpg" alt="Ankle X-ray with Grad-CAM" onerror="this.src='https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80'">
+                </div>
+                <div class="comparison-before">
+                  <img src="./images/ankle-xray.jpg" alt="Ankle X-ray" onerror="this.src='https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80'">
+                </div>
+                <div class="comparison-handle">
+                  <div class="comparison-button">
+                    <i class="fas fa-arrows-alt-h comparison-arrows"></i>
+                  </div>
+                </div>
+                <div class="comparison-before-label comparison-label">Original</div>
+                <div class="comparison-after-label comparison-label">Grad-CAM</div>
+              </div>
+            </div>
+            <h3 class="comparison-title">Lateral Malleolus Fracture</h3>
+            <p class="comparison-description">Grad-CAM visualization reveals a lateral malleolus fracture that might be overlooked due to complex overlapping structures in the ankle joint region.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dark immersive section -->
+    <section class="immersive-section dark">
+      <div class="immersive-inner" style="padding: 3rem 2rem;">
+        <div class="section-intro" style="margin-bottom: 2rem;">
+          <div class="section-eyebrow">
+            <span></span>Future Developments<span></span>
+          </div>
+          <h2 class="section-heading">Where We're Heading</h2>
+          <p class="section-subheading">Our team is continuously working to advance Grad-CAM technology to provide even more accurate and detailed visualizations for medical professionals.</p>
+          <div style="margin-top: 1.5rem;">
+            <a href="detect.html" class="btn-white">
+              <i class="fas fa-rocket"></i> Try MediScan Now
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-placeholder"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mobile menu toggle
+      const menuToggle = document.querySelector('.mobile-menu-button');
+      const mobileNav = document.querySelector('.mobile-nav');
+      const mobileNavClose = document.querySelector('.mobile-nav-close');
+      const header = document.getElementById('header');
+      
+      if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+          mobileNav.classList.add('active');
+        });
+      }
+      
+      if (mobileNavClose) {
+        mobileNavClose.addEventListener('click', () => {
+          mobileNav.classList.remove('active');
+        });
+      }
+      
+      // Header scroll effect
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+      
+      // Load navigation template
+      fetch('./nav-template.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('nav-placeholder').innerHTML = data;
+        })
+        .catch(error => {
+          console.error('Error loading navigation:', error);
+        });
+      
+      // Load footer template
+      fetch('./footer-template.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('footer-placeholder').innerHTML = data;
+        })
+        .catch(error => {
+          console.error('Error loading footer:', error);
+        });
+      
+      // Visual flip effect with enhanced animation
+      const flipButton = document.getElementById('flip-visual');
+      const visualContainer = document.getElementById('visual-container');
+      let isFlipped = false;
+      
+      if (flipButton && visualContainer) {
+        flipButton.addEventListener('click', () => {
+          if (!isFlipped) {
+            // Show heatmap (flip to Grad-CAM view)
+            visualContainer.parentElement.classList.add('show-gradcam');
+            flipButton.classList.add('active');
+            flipButton.innerHTML = '<span class="status-indicator"></span><span class="button-icon"><i class="fas fa-eye"></i></span> Viewing Heatmap';
+            
+            // Add rotation animation to the button icon
+            const buttonIcon = flipButton.querySelector('.button-icon');
+            buttonIcon.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+              buttonIcon.style.transform = 'rotate(0deg)';
+            }, 500);
+          } else {
+            // Show original (flip back to X-ray view)
+            visualContainer.parentElement.classList.remove('show-gradcam');
+            flipButton.classList.remove('active');
+            flipButton.innerHTML = '<span class="button-icon"><i class="fas fa-sync-alt"></i></span> Toggle Heatmap View';
+          }
+          isFlipped = !isFlipped;
+        });
+      }
+      
+      // Timeline animation
+      const timelineItems = document.querySelectorAll('.timeline-item');
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.2
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+      
+      timelineItems.forEach(item => {
+        observer.observe(item);
+      });
+      
+      // Comparison slider functionality
+      const sliders = document.querySelectorAll('.comparison-wrapper');
+      
+      function initComparison(slider) {
+        const handle = slider.querySelector('.comparison-handle');
+        const before = slider.querySelector('.comparison-before');
+        const sliderWidth = slider.offsetWidth;
+        
+        function moveSlider(e) {
+          let position = e.pageX - slider.getBoundingClientRect().left;
+          
+          if (position < 0) position = 0;
+          if (position > sliderWidth) position = sliderWidth;
+          
+          const percentage = (position / sliderWidth) * 100;
+          
+          before.style.width = `${percentage}%`;
+          handle.style.left = `${percentage}%`;
+        }
+        
+        handle.addEventListener('mousedown', () => {
+          slider.addEventListener('mousemove', moveSlider);
+        });
+        
+        document.addEventListener('mouseup', () => {
+          slider.removeEventListener('mousemove', moveSlider);
+        });
+        
+        slider.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          let position = e.touches[0].pageX - slider.getBoundingClientRect().left;
+          
+          if (position < 0) position = 0;
+          if (position > sliderWidth) position = sliderWidth;
+          
+          const percentage = (position / sliderWidth) * 100;
+          
+          before.style.width = `${percentage}%`;
+          handle.style.left = `${percentage}%`;
+        });
+      }
+      
+      sliders.forEach(initComparison);
+      
+      // Horizontal scroll functionality
+      const scrollContainer = document.getElementById('horizontal-scroll');
+      const scrollLeftBtn = document.getElementById('scroll-left');
+      const scrollRightBtn = document.getElementById('scroll-right');
+      
+      if (scrollContainer && scrollLeftBtn && scrollRightBtn) {
+        scrollLeftBtn.addEventListener('click', () => {
+          scrollContainer.scrollBy({
+            left: -550,
+            behavior: 'smooth'
+          });
+        });
+        
+        scrollRightBtn.addEventListener('click', () => {
+          scrollContainer.scrollBy({
+            left: 550,
+            behavior: 'smooth'
+          });
+        });
+      }
+      
+      // Window resize event
+      window.addEventListener('resize', () => {
+        // Re-initialize comparison sliders on window resize
+        sliders.forEach(initComparison);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=width=device-width, initial-scale=1.0" />
+    <title>MediScan - Home</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="footer-styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <style>
+      :root {
+        --primary: #0062FF;
+        --primary-dark: #0048c2;
+        --secondary: #EAEFFF;
+        --accent: #00D1FF;
+        --text: #15173D;
+        --text-light: #596080;
+        --surface-1: #FFFFFF;
+        --surface-2: #F5F7FF;
+        --white: #FFFFFF;
+        --heading-font: 'Inter', sans-serif;
+        --body-font: 'Inter', sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      @keyframes fade-in {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes slide-in-left {
+        0% { opacity: 0; transform: translateX(-30px); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+
+      @keyframes slide-in-right {
+        0% { opacity: 0; transform: translateX(30px); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+
+      @keyframes scale-in {
+        0% { opacity: 0; transform: scale(0.9); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+      }
+
+      @keyframes floating {
+        0% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-15px) rotate(1deg);
+        }
+        50% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        75% {
+          transform: translateY(8px) rotate(-1deg);
+        }
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+      }
+      
+      @keyframes shadow-pulse {
+        0% {
+          transform: scale(1);
+          opacity: 0.5;
+        }
+        25% {
+          transform: scale(0.8);
+          opacity: 0.3;
+        }
+        50% {
+          transform: scale(1);
+          opacity: 0.5;
+        }
+        75% {
+          transform: scale(1.2);
+          opacity: 0.7;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0.5;
+        }
+      }
+
+      body {
+        font-family: var(--body-font);
+        background-color: var(--surface-2);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+        margin: 0;
+      }
+
+      /* HEADER AND NAVIGATION - Make it consistent with other pages */
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        padding: 1rem 0;
+        background-color: var(--surface-2);
+      }
+
+      .header.scrolled {
+        background-color: var(--surface-2);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      }
+      
+      .container {
+        width: 90%;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo span {
+        font-weight: 300;
+        color: var(--text);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+        position: relative;
+      }
+
+      .nav-links a::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--primary);
+        transition: width 0.3s ease;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary);
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .active-indicator {
+        display: block;
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: var(--primary);
+      }
+
+      .cta-button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        border-radius: 50px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 98, 255, 0.15);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+      }
+
+      .cta-button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 98, 255, 0.2);
+      }
+
+      .mobile-menu-button {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* HERO SECTION - Make top padding consistent with fixed header */
+      .hero {
+        padding-top: 10rem;
+        padding-bottom: 6rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-bg {
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 80%;
+        height: 200%;
+        background: radial-gradient(circle at center, rgba(0, 98, 255, 0.05) 0%, rgba(234, 239, 255, 0) 70%);
+        border-radius: 50%;
+        z-index: -1;
+        animation: float 10s ease-in-out infinite;
+      }
+      
+      .hero-bg::after {
+        content: '';
+        position: absolute;
+        top: 30%;
+        left: -30%;
+        width: 60%;
+        height: 60%;
+        background: radial-gradient(circle at center, rgba(0, 209, 255, 0.03) 0%, rgba(234, 239, 255, 0) 70%);
+        border-radius: 50%;
+        z-index: -1;
+        animation: float 15s ease-in-out infinite reverse;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 3rem;
+        align-items: center;
+      }
+
+      .hero-content {
+        animation: fade-in 1s ease forwards;
+      }
+
+      .hero-heading {
+        font-size: 3.5rem;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        font-family: var(--heading-font);
+        font-weight: 800;
+        background: linear-gradient(90deg, var(--text) 0%, var(--primary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .hero-subheading {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        position: relative;
+        display: inline-block;
+      }
+      
+      .hero-subheading::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+      }
+
+      .hero-description {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        margin-bottom: 2.5rem;
+        max-width: 90%;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .hero-image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+
+      .hero-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 98, 255, 0.15);
+        animation: floating 6s ease-in-out infinite;
+        transition: all 0.3s ease;
+      }
+      
+      .hero-image::after {
+        content: '';
+        position: absolute;
+        width: 90%;
+        height: 10px;
+        bottom: -10px;
+        left: 5%;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.1);
+        filter: blur(5px);
+        animation: shadow-pulse 6s ease-in-out infinite;
+      }
+
+      /* FEATURES SECTION - Redesigned without cards */
+      .features {
+        padding: 8rem 0;
+        position: relative;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        font-weight: 700;
+      }
+
+      .section-description {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 4rem;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3rem;
+      }
+
+      .feature {
+        position: relative;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .feature:hover {
+        transform: translateY(-5px);
+      }
+
+      .feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        margin-bottom: 1.5rem;
+        font-size: 1.75rem;
+        color: var(--white);
+        position: relative;
+      }
+
+      .feature:nth-child(1) .feature-icon {
+        background: linear-gradient(135deg, #4BA3FF, #0062FF);
+      }
+
+      .feature:nth-child(2) .feature-icon {
+        background: linear-gradient(135deg, #00D1FF, #00A0FF);
+      }
+
+      .feature:nth-child(3) .feature-icon {
+        background: linear-gradient(135deg, #5E7BFE, #3851E0);
+      }
+
+      .feature-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        color: var(--text);
+        position: relative;
+      }
+      
+      .feature-title::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 40px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary), transparent);
+      }
+
+      .feature-description {
+        color: var(--text-light);
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-top: 1rem;
+      }
+
+      /* STATISTICS SECTION - Redesigned without card style */
+      .stats {
+        padding: 4rem 0;
+        position: relative;
+        background: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 50 C20 30, 50 30, 100 50" stroke="rgba(0,98,255,0.03)" fill="none" stroke-width="20"/></svg>');
+        background-size: 200px;
+      }
+
+      .stats-container {
+        background: none;
+        border-radius: 0;
+        padding: 0;
+        color: var(--text);
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+        text-align: center;
+        box-shadow: none;
+      }
+
+      .stat-item {
+        opacity: 0;
+        transform: translateY(20px);
+        position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 0;
+      }
+      
+      .stat-item::after {
+        content: "";
+        position: absolute;
+        top: 15%;
+        right: 0;
+        height: 70%;
+        width: 1px;
+        background: linear-gradient(to bottom, transparent, var(--primary-light), transparent);
+        opacity: 0.5;
+      }
+      
+      .stat-item:last-child::after {
+        display: none;
+      }
+      
+      .stat-icon {
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+        color: var(--primary);
+      }
+
+      .stat-number {
+        font-size: 3.5rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .stat-label {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        font-weight: 500;
+        position: relative;
+      }
+      
+      .stat-label::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        opacity: 0.6;
+      }
+
+      /* WORKFLOW SECTION - Redesigned without cards */
+      .workflow {
+        padding: 8rem 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .workflow-grid {
+        display: flex;
+        justify-content: space-between;
+        gap: 3.5rem;
+        position: relative;
+        counter-reset: workflow-counter;
+        margin-top: 3rem;
+      }
+
+      .workflow-item {
+        flex: 1;
+        position: relative;
+        padding-left: 3.5rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+      }
+      
+      .workflow-item:hover {
+        transform: translateY(-5px);
+      }
+
+      .workflow-item:before {
+        counter-increment: workflow-counter;
+        content: counter(workflow-counter);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: var(--white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1.25rem;
+      }
+
+      .workflow-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        color: var(--text);
+        position: relative;
+      }
+      
+      .workflow-title::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 40px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary), transparent);
+      }
+
+      .workflow-description {
+        color: var(--text-light);
+        font-size: 1rem;
+        line-height: 1.6;
+        text-align: left;
+      }
+
+      .workflow-connect {
+        position: absolute;
+        top: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 1px;
+        width: 50%;
+        background: linear-gradient(to right, 
+          transparent, 
+          var(--primary-light) 20%, 
+          var(--primary-light) 80%, 
+          transparent
+        );
+        opacity: 0.4;
+      }
+
+      /* TESTIMONIALS SECTION - Enhanced Design with Indian Doctors */
+      .testimonials {
+        padding: 8rem 0;
+        background-color: var(--surface-2);
+        position: relative;
+      }
+      
+      .testimonials::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M25,30 Q35,20 45,30 T65,30" stroke="rgba(0,98,255,0.03)" fill="none" stroke-width="4"/></svg>');
+        opacity: 0.5;
+        z-index: 0;
+      }
+
+      .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2.5rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .testimonial {
+        background: var(--surface-1);
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.03);
+        position: relative;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .testimonial:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 98, 255, 0.1);
+      }
+
+      .testimonial-quote {
+        font-size: 1.15rem;
+        color: var(--text);
+        margin-bottom: 1.75rem;
+        font-weight: 500;
+        line-height: 1.7;
+        position: relative;
+      }
+
+      .testimonial-quote::before {
+        content: '"';
+        position: absolute;
+        top: -30px;
+        left: -10px;
+        font-size: 6rem;
+        color: rgba(0, 98, 255, 0.07);
+        font-family: serif;
+        line-height: 1;
+      }
+
+      .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        position: relative;
+      }
+      
+      .testimonial-author::before {
+        content: "";
+        position: absolute;
+        top: -15px;
+        left: 0;
+        width: 40px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+        opacity: 0.5;
+      }
+
+      .testimonial-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1.4rem;
+      }
+
+      .testimonial-info {
+        flex: 1;
+      }
+
+      .testimonial-name {
+        font-weight: 700;
+        font-size: 1.15rem;
+        margin-bottom: 0.25rem;
+        color: var(--text);
+      }
+
+      .testimonial-role {
+        color: var(--primary);
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      
+      .testimonial-hospital {
+        color: var(--text-light);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+      }
+
+      /* SUCCESS STORIES SECTION - Enhanced Card Design */
+      .success-stories {
+        padding: 8rem 0;
+        position: relative;
+        background-color: var(--surface-2);
+        overflow: hidden;
+      }
+      
+      .success-stories-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><path d="M15 15 L45 15 L45 45 L15 45 Z" stroke="rgba(0,98,255,0.03)" fill="none" stroke-width="1"/></svg>');
+        opacity: 0.3;
+        z-index: 0;
+      }
+      
+      .success-stories-header {
+        text-align: center;
+        position: relative;
+        margin-bottom: 4rem;
+      }
+      
+      .success-stories-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        color: var(--text);
+        position: relative;
+        display: inline-block;
+      }
+      
+      .success-stories-title::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+      }
+      
+      .success-stories-subtitle {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        max-width: 700px;
+        margin: 1.5rem auto 0;
+      }
+
+      .success-stories-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .success-story {
+        background: linear-gradient(145deg, var(--surface-1), #f8faff);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        opacity: 0;
+        transform: translateY(20px);
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .success-story:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0, 98, 255, 0.15);
+      }
+      
+      .success-story-content {
+        padding: 2rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .success-story-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      
+      .success-story-tag {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: var(--white);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 10px rgba(0, 98, 255, 0.2);
+        display: inline-block;
+      }
+      
+      .success-story-date {
+        color: var(--primary);
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+      }
+      
+      .success-story-date i {
+        margin-right: 0.4rem;
+        font-size: 0.8rem;
+      }
+      
+      .success-story-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--text);
+        line-height: 1.4;
+        transition: color 0.3s ease;
+        position: relative;
+      }
+      
+      .success-story:hover .success-story-title {
+        color: var(--primary);
+      }
+      
+      .success-story-title::after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        transition: width 0.3s ease;
+      }
+      
+      .success-story:hover .success-story-title::after {
+        width: 50px;
+      }
+      
+      .success-story-excerpt {
+        font-size: 0.95rem;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+        line-height: 1.7;
+        flex-grow: 1;
+      }
+      
+      .success-story-stats {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        padding-top: 1.25rem;
+        margin-top: auto;
+      }
+      
+      .success-story-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        transition: transform 0.3s ease;
+      }
+      
+      .success-story:hover .success-story-stat {
+        transform: translateY(-5px);
+      }
+      
+      .success-story-stat:first-child::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: -25%;
+        height: 100%;
+        width: 1px;
+        background: linear-gradient(to bottom, transparent, rgba(0, 98, 255, 0.1), transparent);
+      }
+      
+      .success-story-stat-value {
+        font-weight: 800;
+        font-size: 1.6rem;
+        color: var(--primary);
+        margin-bottom: 0.25rem;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      .success-story-stat-label {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        font-weight: 500;
+      }
+      
+      .success-story-link {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--primary);
+        color: var(--white);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px 0 0 0;
+        transition: all 0.3s ease;
+        opacity: 0;
+        transform: translate(100%, 100%);
+      }
+      
+      .success-story:hover .success-story-link {
+        opacity: 1;
+        transform: translate(0, 0);
+      }
+      
+      .success-stories-cta {
+        margin-top: 4rem;
+        text-align: center;
+      }
+      
+      .btn-success-stories {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: var(--white);
+        border: none;
+        border-radius: 50px;
+        padding: 1rem 2.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(0, 98, 255, 0.15);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .btn-success-stories::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.7s ease;
+      }
+      
+      .btn-success-stories:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(0, 98, 255, 0.2);
+      }
+      
+      .btn-success-stories:hover::before {
+        left: 100%;
+      }
+      
+      @media (max-width: 1200px) {
+        .success-stories-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .success-stories-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .success-story {
+          max-width: 500px;
+          margin: 0 auto;
+        }
+      }
+
+
+
+      /* RESPONSIVE STYLES */
+      @media (max-width: 1200px) {
+        .hero-heading {
+          font-size: 3rem;
+        }
+        
+        .features-grid,
+        .workflow-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .stats-container {
+          padding: 3rem 2rem;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .hero-heading {
+          font-size: 2.5rem;
+        }
+        
+        .nav-links {
+          display: none;
+        }
+        
+        .mobile-menu-button {
+          display: block;
+        }
+        
+        .mobile-nav {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100vh;
+          background-color: var(--white);
+          display: flex;
+          flex-direction: column;
+          padding: 2rem;
+          transform: translateY(-100%);
+          transition: transform 0.3s ease;
+          z-index: 1001;
+        }
+        
+        .mobile-nav.active {
+          transform: translateY(0);
+        }
+        
+        .mobile-nav-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 2rem;
+        }
+        
+        .mobile-nav-close {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+        }
+        
+        .mobile-nav-links {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        
+        .mobile-nav-links a {
+          color: var(--text);
+          text-decoration: none;
+          font-size: 1.2rem;
+          font-weight: 600;
+        }
+        
+        .footer-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero-heading {
+          font-size: 2.2rem;
+        }
+        
+        .features-grid,
+        .workflow-grid,
+        .testimonials-grid,
+        .stats-container {
+          grid-template-columns: 1fr;
+        }
+        
+        .stats-container {
+          padding: 2.5rem 1.5rem;
+        }
+        
+        .section-title {
+          font-size: 2rem;
+        }
+        
+        .workflow-connect {
+          display: none;
+        }
+        
+        .footer-bottom {
+          flex-direction: column;
+          gap: 1rem;
+          text-align: center;
+        }
+        
+        .footer-legal {
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero-buttons {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        
+        .footer-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .cta-container {
+          padding: 3rem 1.5rem;
+        }
+        
+        .cta-title {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- NAVIGATION -->
+    <div id="nav-placeholder"></div>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <h2 class="hero-subheading">Advanced Healthcare Technology</h2>
+          <h1 class="hero-heading">AI-Powered Bone Fracture Detection</h1>
+          <p class="hero-description">
+            Experience state-of-the-art fracture detection powered by advanced artificial intelligence, 
+            delivering unprecedented accuracy and speed in medical imaging analysis for healthcare professionals.
+          </p>
+          <div class="hero-buttons">
+            <a href="detect.html" class="btn-primary">
+              Start Detection <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="features.html" class="btn-secondary">
+              Explore Features <i class="fas fa-search"></i>
+            </a>
+          </div>
+        </div>
+        <div class="hero-image-container">
+          <img src="images/ai-fracture-detection.jpg" alt="AI-Powered Bone Fracture Detection Illustration" class="hero-image">
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features">
+      <div class="container">
+        <h2 class="section-title">Powerful Features</h2>
+        <p class="section-description">
+          Our advanced AI system offers unparalleled capabilities in fracture detection and analysis
+        </p>
+        <div class="features-grid">
+          <div class="feature" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <h3 class="feature-title">Lightning Fast Processing</h3>
+            <p class="feature-description">
+              Get results in seconds with our optimized AI processing pipeline designed for real-time fracture detection.
+            </p>
+          </div>
+          <div class="feature" data-aos="fade-up" data-aos-delay="200">
+            <div class="feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="feature-title">99.8% Accuracy Rate</h3>
+            <p class="feature-description">
+              Industry-leading precision powered by our advanced YOLOv8 technology and continuously improved models.
+            </p>
+          </div>
+          <div class="feature" data-aos="fade-up" data-aos-delay="300">
+            <div class="feature-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3 class="feature-title">Enterprise Security</h3>
+            <p class="feature-description">
+              HIPAA-compliant security with end-to-end encryption ensuring patient data remains protected at all times.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATISTICS SECTION -->
+    <section class="stats">
+      <div class="container">
+        <div class="stats-container">
+          <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-icon"><i class="fas fa-images"></i></div>
+            <div class="stat-number" data-target="10000">0</div>
+            <div class="stat-label">Images Processed</div>
+          </div>
+          <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-number" data-target="99.8">0</div>
+            <div class="stat-label">% Accuracy</div>
+          </div>
+          <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+            <div class="stat-icon"><i class="fas fa-hospital"></i></div>
+            <div class="stat-number" data-target="42">0</div>
+            <div class="stat-label">Hospitals Connected</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORKFLOW SECTION -->
+    <section class="workflow">
+      <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-description">
+          Our simple three-step process makes fracture detection faster and more reliable than ever
+        </p>
+        <div class="workflow-grid">
+          <div class="workflow-connect"></div>
+          <div class="workflow-connect"></div>
+          <div class="workflow-item" data-aos="fade-right" data-aos-delay="100">
+            <h3 class="workflow-title">Upload X-Ray Image</h3>
+            <p class="workflow-description">
+              Simply upload your X-ray image in any common format like JPG, PNG, or DICOM and our system will process it instantly.
+            </p>
+          </div>
+          <div class="workflow-item" data-aos="fade-right" data-aos-delay="200">
+            <h3 class="workflow-title">AI Analysis</h3>
+            <p class="workflow-description">
+              Our advanced AI model analyzes the image using YOLOv8 technology to detect fractures with unmatched precision.
+            </p>
+          </div>
+          <div class="workflow-item" data-aos="fade-right" data-aos-delay="300">
+            <h3 class="workflow-title">Get Detailed Results</h3>
+            <p class="workflow-description">
+              Receive comprehensive fracture detection results with highlighted areas and detailed analysis within seconds.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS SECTION -->
+    <section class="testimonials">
+      <div class="container">
+        <h2 class="section-title">What Medical Professionals Say</h2>
+        <p class="section-description">
+          Healthcare specialists trust our technology for accurate and rapid fracture detection
+        </p>
+        <div class="testimonials-grid">
+          <div class="testimonial" data-aos="fade-up" data-aos-delay="100">
+            <p class="testimonial-quote">
+              This revolutionary AI tool has dramatically reduced our diagnosis time and improved accuracy. It's now an essential part of our orthopedic workflow at AIIMS, helping us treat patients faster.
+            </p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">AR</div>
+              <div class="testimonial-info">
+                <div class="testimonial-name">Dr. Arun Rathore</div>
+                <div class="testimonial-role">Head of Orthopedics</div>
+                <div class="testimonial-hospital">AIIMS, New Delhi</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial" data-aos="fade-up" data-aos-delay="200">
+            <p class="testimonial-quote">
+              The accuracy of BoneDetect's AI system is remarkable. As a radiologist with 15 years of experience, I've found it helps identify subtle fractures that might be missed in busy clinical settings.
+            </p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">SP</div>
+              <div class="testimonial-info">
+                <div class="testimonial-name">Dr. Sarita Patel</div>
+                <div class="testimonial-role">Senior Radiologist</div>
+                <div class="testimonial-hospital">Fortis Memorial, Gurugram</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUCCESS STORIES SECTION -->
+    <section class="success-stories">
+      <div class="success-stories-bg"></div>
+      <div class="container">
+        <div class="success-stories-header">
+          <h2 class="success-stories-title">Real-World Success Stories</h2>
+          <p class="success-stories-subtitle">
+            Discover how BoneDetect is transforming healthcare practices and improving patient outcomes worldwide.
+          </p>
+        </div>
+        <div class="success-stories-grid">
+          <div class="success-story" data-aos="fade-up" data-aos-delay="100">
+            <div class="success-story-content">
+              <div class="success-story-meta">
+                <span class="success-story-tag">Orthopedics</span>
+                <span class="success-story-date"><i class="fas fa-calendar-alt"></i> March 2025</span>
+              </div>
+              <h3 class="success-story-title">AIIMS New Delhi: Revolutionizing Fracture Diagnosis</h3>
+              <p class="success-story-excerpt">
+                BoneDetect has become an integral part of the orthopedic department at AIIMS, reducing diagnosis time by 50% and improving treatment planning.
+              </p>
+              <div class="success-story-stats">
+                <div class="success-story-stat">
+                  <span class="success-story-stat-value">50%</span>
+                  <span class="success-story-stat-label">Time Saved</span>
+                </div>
+                <div class="success-story-stat">
+                  <span class="success-story-stat-value">99.8%</span>
+                  <span class="success-story-stat-label">Accuracy</span>
+                </div>
+              </div>
+            </div>
+            <a href="contact.html" class="success-story-link"><i class="fas fa-arrow-right"></i></a>
+          </div>
+          <div class="success-story" data-aos="fade-up" data-aos-delay="200">
+            <div class="success-story-content">
+              <div class="success-story-meta">
+                <span class="success-story-tag">Radiology</span>
+                <span class="success-story-date"><i class="fas fa-calendar-alt"></i> February 2025</span>
+              </div>
+              <h3 class="success-story-title">Fortis Memorial: Enhancing Radiology Precision</h3>
+              <p class="success-story-excerpt">
+                Radiologists at Fortis Memorial have reported improved detection of subtle fractures, especially in complex cases with multiple injury sites.
+              </p>
+              <div class="success-story-stats">
+                <div class="success-story-stat">
+                  <span class="success-story-stat-value">15%</span>
+                  <span class="success-story-stat-label">Improved Detection</span>
+                </div>
+                <div class="success-story-stat">
+                  <span class="success-story-stat-value">42</span>
+                  <span class="success-story-stat-label">Hospitals Connected</span>
+                </div>
+              </div>
+            </div>
+            <a href="contact.html" class="success-story-link"><i class="fas fa-arrow-right"></i></a>
+          </div>
+          <div class="success-story" data-aos="fade-up" data-aos-delay="300">
+            <div class="success-story-content">
+              <div class="success-story-meta">
+                <span class="success-story-tag">Research Impact</span>
+                <span class="success-story-date"><i class="fas fa-calendar-alt"></i> January 2025</span>
+              </div>
+              <h3 class="success-story-title">Training Next-Gen Orthopedic Surgeons</h3>
+              <p class="success-story-excerpt">
+                Medical institutions across India have integrated BoneDetect into their curriculum, helping students learn advanced fracture identification.
+              </p>
+              <div class="success-story-stats">
+                <div class="success-story-stat">
+                  <span class="success-story-stat-value">12</span>
+                  <span class="success-story-stat-label">Medical Schools</span>
+                </div>
+                <div class="success-story-stat">
+                  <span class="success-story-stat-value">500+</span>
+                  <span class="success-story-stat-label">Students Trained</span>
+                </div>
+              </div>
+            </div>
+            <a href="contact.html" class="success-story-link"><i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="success-stories-cta">
+          <a href="contact.html" class="btn-success-stories">
+            Share Your Success Story <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <!-- Scripts -->
+    <script src="nav-handler.js"></script>
+    <script src="footer-handler.js"></script>
+    <script>
+      // Intersection Observer for animations
+      const fadeElements = document.querySelectorAll('.feature, .stat-item, .workflow-item, .testimonial, .success-story');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      fadeElements.forEach(element => {
+        observer.observe(element);
+      });
+
+      // Stats counter animation
+      const statsSection = document.querySelector('.stats');
+      const statNumbers = document.querySelectorAll('.stat-number');
+      let animated = false;
+
+      const statsObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !animated) {
+          animated = true;
+          animateNumbers();
+        }
+      }, { threshold: 0.5 });
+
+      if (statsSection) {
+        statsObserver.observe(statsSection);
+      }
+
+      function animateNumbers() {
+        statNumbers.forEach(statNumber => {
+          const target = parseFloat(statNumber.dataset.target);
+          const duration = 2000; 
+          const startTime = performance.now();
+          
+          function updateNumber(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easing = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
+            
+            const currentValue = easing * target;
+            
+            if (Number.isInteger(target)) {
+              statNumber.textContent = Math.floor(currentValue).toLocaleString();
+            } else {
+              statNumber.textContent = currentValue.toFixed(1);
+            }
+            
+            if (progress < 1) {
+              requestAnimationFrame(updateNumber);
+            } else {
+              statNumber.textContent = target.toString();
+            }
+          }
+          
+          requestAnimationFrame(updateNumber);
+        });
+      }
+    </script>
+  </body>
+</html>
