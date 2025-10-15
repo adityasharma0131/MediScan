@@ -81,7 +81,6 @@ MediScan consists of two main components:
 │   ├── gradcam.html        # Grad-CAM explanation page
 │   ├── about.html          # About page
 │   ├── features.html       # Features page
-│   ├── team.html           # Team page
 │   ├── contact.html        # Contact page
 │   ├── styles.css          # Main stylesheet
 │   └── images/             # Frontend images
@@ -175,16 +174,6 @@ For developers who want to contribute to the project:
    cd backend
    uvicorn app:app --reload --debug
    ```
-
-## 👥 Our Team
-
-MediScan is developed by a multidisciplinary team of AI/ML developers and software engineers:
-
-- **Alok Kumar** - *Full Stack Dev* - Lead developer specializing in AI integration and full-stack development
-- **Amrit Kumar** - *Technical Lead* - Project architect and technical lead overseeing system design and implementation
-- **Aashish Kumar** - *Python Dev* - Backend Python developer specializing in AI model integration and machine learning
-- **Samridhi Bagchi** - *Frontend Developer* - UI/UX specialist focused on creating intuitive medical interfaces
-- **Karan Singh** - *ML Engineer* - AI/ML expert specializing in medical image processing and deep learning model optimization
 
 ## 📜 License
 
