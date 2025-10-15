@@ -201,4 +201,4 @@ This project is licensed under the MIT License - see the [LICENSE](frontend/LICE
 <div align="center">
   <p>Made with ❤️ for improving medical diagnostics</p>
   <p>© 2025 MediScan Team</p>
-</div>
+</div>"# MediScan" 
